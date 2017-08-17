@@ -1,13 +1,18 @@
 const w = window.innerWidth,h = window.innerHeight
-var animHandler = new AnimHandler()
-class MenuRouterComponent extends Component {
+
+class MenuRouterComponent extends HTMLElement {
     constructor() {
         super()
         this.div = document.createElement('div')
         const shadow = this.attachShadow({mode:'open'})
-        shadow.appendChild(this.div)
-        this.div.style.height = this.children * (this.h/12)
-        this.div.style.width = w/3
+        console.log(this.children)
+        for(var i=0;i<this.children.length;i++) {
+            var br = document.createElement('br')
+            var child = this.children[i]
+            console.log(child)
+            shadow.appendChild(child)
+            shadow.appendChild(br)
+        }
     }
     render() {
 
@@ -65,21 +70,22 @@ class Menu {
         context.save()
         context.translate(w/2,h/2)
         context.fillStyle = 'gray'
-        context.fillRect(0,0,w,h)
-        context.fillStyle = 'white'
-        var tw = context.measureText(this.text).width
-        context.fillText(text,-tw/2,0)
+        context.fillRect(-w/2,-h/2,w,h)
         context.save()
-        context.scale(scale,1)
-        context.globalAlpha = 0.6
+        context.scale(this.scale,1)
+        context.globalAlpha = 0.3
         context.fillStyle = 'black'
         context.fillRect(-w/2,-h/2,w,h)
         context.restore()
+        context.fillStyle = 'white'
+        var tw = context.measureText(this.text).width
+        context.fillText(this.text,-tw/2,0)
         context.restore()
     }
     update() {
         this.scale += 0.2*this.dir
-        if(this.scale >1 || this.scale = 0) {
+        console.log(this.scale)
+        if(this.scale >1 || this.scale < 0) {
             this.dir = 0
             if(this.scale > 1) {
                 this.scale = 1
@@ -102,24 +108,29 @@ class AnimHandler {
         this.animated = false
     }
     startAnimating(curr) {
+        console.log("coming here")
         if(!this.animated) {
             this.animated = true
             curr.startUpdating(1)
-            if(!this.prev) {
+            if(this.prev) {
                 this.prev.startUpdating(-1)
             }
             const interval = setInterval(()=>{
+                curr.render()
                 curr.update()
                 if(this.prev) {
+                    this.prev.render()
                     this.prev.update()
                 }
                 if(curr.stopped()) {
                     this.prev = curr
                     this.animated = false
+                    clearInterval(interval)
                 }
             },75)
         }
     }
 }
+var animHandler = new AnimHandler()
 customElements.define('menu-router-comp',MenuRouterComponent)
 customElements.define('menu-comp',MenuComponent)
