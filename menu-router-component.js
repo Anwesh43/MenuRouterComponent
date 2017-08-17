@@ -121,3 +121,5 @@ class AnimHandler {
         }
     }
 }
+customElements.define('menu-router-comp',MenuRouterComponent)
+customElements.define('menu-comp',MenuComponent)
