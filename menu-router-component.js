@@ -4,15 +4,24 @@ class MenuRouterComponent extends HTMLElement {
     constructor() {
         super()
         this.div = document.createElement('div')
-        const shadow = this.attachShadow({mode:'open'})
-        console.log(this.children)
+
+        const children = []
         for(var i=0;i<this.children.length;i++) {
-            var br = document.createElement('br')
-            var child = this.children[i]
+            children.push(this.children[i])
+        }
+        const shadow = this.attachShadow({mode:'open'})
+        for(var i=0;i<children.length;i++) {
+            console.log(children)
+            const child = children[i]
+            child.onclick = () =>{
+                console.log(child)
+                this.div.innerHTML = child.innerHTML
+            }
             console.log(child)
             shadow.appendChild(child)
-            shadow.appendChild(br)
         }
+        shadow.appendChild(document.createElement('br'))
+        shadow.appendChild(this.div)
     }
     render() {
 
@@ -26,7 +35,7 @@ class MenuComponent extends HTMLElement{
         super()
         this.img = document.createElement('img')
         const shadow = this.attachShadow({mode:'open'})
-        this.text = this.innerHTML
+        this.text = this.getAttribute('text')
         shadow.appendChild(this.img)
     }
     update() {
@@ -40,7 +49,7 @@ class MenuComponent extends HTMLElement{
     }
     render() {
         const canvas = document.createElement('canvas')
-        canvas.width = w/3
+        canvas.width = w/10
         canvas.height = h/12
         const context = canvas.getContext('2d')
         if(!this.menu) {
@@ -84,7 +93,6 @@ class Menu {
     }
     update() {
         this.scale += 0.2*this.dir
-        console.log(this.scale)
         if(this.scale >1 || this.scale < 0) {
             this.dir = 0
             if(this.scale > 1) {
@@ -108,7 +116,6 @@ class AnimHandler {
         this.animated = false
     }
     startAnimating(curr) {
-        console.log("coming here")
         if(!this.animated) {
             this.animated = true
             curr.startUpdating(1)
@@ -123,6 +130,10 @@ class AnimHandler {
                     this.prev.update()
                 }
                 if(curr.stopped()) {
+                    if(curr.onclick) {
+                        curr.onclick()
+                    }
+                    console.log("clicked")
                     this.prev = curr
                     this.animated = false
                     clearInterval(interval)
