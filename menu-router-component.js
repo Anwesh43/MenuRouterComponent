@@ -34,3 +34,25 @@ class MenuComponent extends HTMLElement{
         this.render()
     }
 }
+class Menu {
+    constructor(text) {
+        this.text = text
+        this.scale = 0
+    }
+    draw(context,w,h) {
+        context.font = context.font.replace(/\d{2}/,h/3)
+        context.save()
+        context.translate(w/2,h/2)
+        context.fillStyle = 'white'
+        var tw = context.measureText(this.text).width
+        context.fillText(text,-tw/2,0)
+        context.save()
+        context.scale(scale,1)
+        context.fillRect(-w/2,-h/2,w,h)
+        context.restore()
+        context.restore()
+    }
+    update(scale) {
+        this.scale = scale
+    }
+}
