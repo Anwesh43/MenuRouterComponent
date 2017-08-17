@@ -38,21 +38,43 @@ class Menu {
     constructor(text) {
         this.text = text
         this.scale = 0
+        this.dir = 0
     }
     draw(context,w,h) {
+        context.globalAlpha = 1
         context.font = context.font.replace(/\d{2}/,h/3)
         context.save()
         context.translate(w/2,h/2)
+        context.fillStyle = 'gray'
+        context.fillRect(0,0,w,h)
         context.fillStyle = 'white'
         var tw = context.measureText(this.text).width
         context.fillText(text,-tw/2,0)
         context.save()
         context.scale(scale,1)
+        context.globalAlpha = 0.6
+        context.fillStyle = 'black'
         context.fillRect(-w/2,-h/2,w,h)
         context.restore()
         context.restore()
     }
-    update(scale) {
-        this.scale = scale
+    update() {
+        this.scale += 0.2*this.dir
+        if(this.scale >1 || this.scale = 0) {
+            this.dir = 0
+            if(this.scale > 1) {
+                this.scale = 1
+            }
+            if(this.scale < 0) {
+                this.scale = 0
+            }
+        }
+
+    }
+    stopped() {
+        return this.dir == 0
+    }
+    startUpdating(dir) {
+        this.dir = dir
     }
 }
