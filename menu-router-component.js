@@ -1,4 +1,5 @@
 const w = window.innerWidth,h = window.innerHeight
+var animHandler = new AnimHandler()
 class MenuRouterComponent extends Component {
     constructor() {
         super()
@@ -40,10 +41,16 @@ class MenuComponent extends HTMLElement{
         if(!this.menu) {
             this.menu = new Menu(this.text)
         }
+        this.menu.draw(context,canvas.width,canvas.height)
         this.img.src = canvas.toDataURL()
     }
     connectedCallback() {
         this.render()
+        this.img.onmousedown = ()=> {
+            if(this.menu.scale == 0) {
+                animHandler.startAnimating(this)
+            }
+        }
     }
 }
 class Menu {
