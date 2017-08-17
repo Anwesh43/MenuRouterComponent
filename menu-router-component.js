@@ -23,11 +23,23 @@ class MenuComponent extends HTMLElement{
         this.text = this.innerHTML
         shadow.appendChild(this.img)
     }
+    update() {
+        this.menu.update()
+    }
+    startUpdating(dir) {
+        this.menu.startUpdating(dir)
+    }
+    stopped() {
+        return this.menu.stopped()
+    }
     render() {
         const canvas = document.createElement('canvas')
         canvas.width = w/3
         canvas.height = h/12
         const context = canvas.getContext('2d')
+        if(!this.menu) {
+            this.menu = new Menu(this.text)
+        }
         this.img.src = canvas.toDataURL()
     }
     connectedCallback() {
@@ -76,5 +88,29 @@ class Menu {
     }
     startUpdating(dir) {
         this.dir = dir
+    }
+}
+class AnimHandler {
+    constructor() {
+        this.animated = false
+    }
+    startAnimating(curr) {
+        if(!this.animated) {
+            this.animated = true
+            curr.startUpdating(1)
+            if(!this.prev) {
+                this.prev.startUpdating(-1)
+            }
+            const interval = setInterval(()=>{
+                curr.update()
+                if(this.prev) {
+                    this.prev.update()
+                }
+                if(curr.stopped()) {
+                    this.prev = curr
+                    this.animated = false
+                }
+            },75)
+        }
     }
 }
